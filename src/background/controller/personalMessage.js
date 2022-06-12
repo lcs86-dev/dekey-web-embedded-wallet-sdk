@@ -23,7 +23,6 @@
 
 import EventEmitter from "events";
 import ethUtil from "ethereumjs-util";
-import log from "loglevel";
 import { ethErrors } from "eth-rpc-errors";
 import { v4 as uuidv4 } from "uuid";
 import AccountUtil from "../../util/account";
@@ -66,7 +65,6 @@ export default class PersonalMessageController extends EventEmitter {
    *
    */
   getUnapprovedMsgs() {
-    log.debug("getUnapprovedMsgs", this.messages);
     return this.messages
       .filter((msg) => msg.status === "unapproved")
       .reduce((result, msg) => {
@@ -86,7 +84,6 @@ export default class PersonalMessageController extends EventEmitter {
    *
    */
   addUnapprovedMessageAsync(req, res) {
-    log.debug("addUnapprovedMessageAsync req", req);
     return new Promise(async (resolve, reject) => {
       const { user } = this.dekeyStore.getState();
       const activeAccount = AccountUtil.getActiveAccount(user.accounts);
@@ -118,7 +115,6 @@ export default class PersonalMessageController extends EventEmitter {
 
       const msgId = await this.addUnapprovedMessage(req);
       this.once(`${msgId}:finished`, (data) => {
-        log.debug(`${msgId}:finished`, data);
         switch (data.status) {
           case "signed":
             return resolve(data.rawSig);
@@ -175,7 +171,6 @@ export default class PersonalMessageController extends EventEmitter {
   }
 
   getMsgParams(req) {
-    log.debug("getMsgParams", req);
     // const address = await validateAndNormalizeKeyholder(req.params[0], req);
     if (req.method === "personal_sign" || req.method === "klay_sign") {
       const firstParam = req.params[0];
@@ -237,7 +232,6 @@ export default class PersonalMessageController extends EventEmitter {
     // sets the status op the message to 'approved'
     return this.approveMessage(msgParams)
       .then(async (cleanMsgParams) => {
-        log.debug("cleanMsgParams", cleanMsgParams);
         const { user, accessToken } = this.dekeyStore.getState();
         const activeAccount = AccountUtil.getActiveAccount(user.accounts);
 
@@ -245,7 +239,6 @@ export default class PersonalMessageController extends EventEmitter {
           cleanMsgParams.msgParams.from.toLowerCase() !==
           activeAccount.ethAddress.toLowerCase()
         ) {
-          log.debug("address is not equal");
           return;
         }
 
@@ -273,9 +266,7 @@ export default class PersonalMessageController extends EventEmitter {
         this.setMsgStatusSigned(msgId, rawSig);
         return rawSig;
       })
-      .catch((err) => {
-        //log.error(err);
-      });
+      .catch((err) => {});
   }
 
   async personalRecover(req, res) {
@@ -316,8 +307,6 @@ export default class PersonalMessageController extends EventEmitter {
    *
    */
   getMsg(msgId) {
-    log.debug("getMsg", msgId);
-    log.debug("messages", this.messages);
     return this.messages.find((msg) => msg.id === msgId);
   }
 
@@ -326,7 +315,6 @@ export default class PersonalMessageController extends EventEmitter {
       this.setMsgStatusApproved(msgParams.id);
       return this.prepMsgForSigning(msgParams);
     } catch (error) {
-      //log.error(error);
       throw error;
     }
   }
@@ -425,7 +413,6 @@ export default class PersonalMessageController extends EventEmitter {
    */
   async _saveMsgList() {
     const unapprovedPersonalMsgs = this.getUnapprovedMsgs();
-    log.debug("unapprovedPersonalMsgs", unapprovedPersonalMsgs);
     const unapprovedPersonalMsgCount = Object.keys(
       unapprovedPersonalMsgs
     ).length;
@@ -453,9 +440,7 @@ export default class PersonalMessageController extends EventEmitter {
       if (stripped.match(hexRe)) {
         return this._addHexPrefix(stripped);
       }
-    } catch (e) {
-      log.debug(`Message was not hex encoded, interpreting as utf8.`);
-    }
+    } catch (e) {}
 
     return ethUtil.bufferToHex(Buffer.from(data, "utf8"));
   }

@@ -6,7 +6,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const BrotliPlugin = require("brotli-webpack-plugin");
 
-require("dotenv").config({ path: "./.env" });
+// require("dotenv").config({ path: "./.env" });
 
 module.exports = {
   mode: "production",
@@ -14,7 +14,7 @@ module.exports = {
     background: "./src/background/wrapper.js",
   },
   output: {
-    path: path.resolve(__dirname, "../", "build/web-embedded-wallet"),
+    path: path.resolve(__dirname, "build"),
     filename: "[name].bundle.js",
   },
   module: {

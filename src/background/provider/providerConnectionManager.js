@@ -2,7 +2,6 @@ import EventEmitter from "events";
 import Web3 from "web3";
 import { BigNumber, ethers } from "ethers";
 import EthQuery from "ethjs-query";
-// import humanAbi from "human-standard-token-abi";
 import { JsonRpcEngine } from "json-rpc-engine";
 import { providerFromEngine } from "eth-json-rpc-middleware";
 import {
@@ -10,9 +9,6 @@ import {
   createEventEmitterProxy,
 } from "swappable-obj-proxy";
 
-// import {NetworkModel} from '../../main/transactions/interface';
-// import {KIP_ABI} from '../../infra/rest-api/erc20';
-// import log from 'loglevel';
 import createJsonRpcClient from "./createJsonRpcClient";
 
 export class ProviderConnectionManager extends EventEmitter {
