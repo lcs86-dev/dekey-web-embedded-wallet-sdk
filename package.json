@@ -2,7 +2,6 @@
   "name": "dekey-web-embedded-wallet",
   "version": "0.1.4",
   "private": false,
-  "main": "dist/dekey.js",
   "dependencies": {
     "axios": "^0.21.4",
     "buffer": "5.2.1",
