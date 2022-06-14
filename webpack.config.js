@@ -6,7 +6,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const BrotliPlugin = require("brotli-webpack-plugin");
 
-// require("dotenv").config({ path: "./.env" });
+require("dotenv").config({ path: "./.env" });
 
 module.exports = {
   mode: "production",
@@ -43,7 +43,7 @@ module.exports = {
       [
         {
           from: "src/background/wasm/dkeyswasm.wasm",
-          to: path.resolve(__dirname, "../", "build/web-embedded-wallet"),
+          to: path.resolve(__dirname, "dist"),
           force: true,
         },
       ],
