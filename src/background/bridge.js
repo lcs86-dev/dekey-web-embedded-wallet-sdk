@@ -294,6 +294,7 @@ export class BackgroundBridge extends EventEmitter {
           this.accountController
         ),
         unlock: this.accountController.unlock.bind(this.accountController),
+        lock: this.accountController.lock.bind(this.accountController),
         getUser: this.accountController.getUser.bind(this.accountController),
         changePassword: this.accountController.changePassword.bind(
           this.accountController

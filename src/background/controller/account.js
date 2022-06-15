@@ -95,6 +95,14 @@ export class AccountController {
     }
   }
 
+  async lock() {
+    this.dekeyStore.updateStore({
+      locked: true,
+      accessToken: null,
+      expirationTime: null,
+    });
+  }
+
   async getUser() {
     return this.accountService.getUser();
   }

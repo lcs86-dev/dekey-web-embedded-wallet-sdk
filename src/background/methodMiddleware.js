@@ -14,6 +14,7 @@ export default function getRpcMethodMiddleware({
   dekeyGenerateKey,
   dekeyRecoverShare,
   retrieveKeyShare,
+  lock,
   unlock,
   addUnapprovedMessageAsync,
   dekeyHandleSavingRecoverInfoFailure,
@@ -104,6 +105,15 @@ export default function getRpcMethodMiddleware({
       dekey_unlock: async () => {
         try {
           await unlock(req.params[0]);
+          res.result = true;
+        } catch (error) {
+          res.error = error.toString();
+        }
+      },
+
+      dekey_lock: async () => {
+        try {
+          await lock();
           res.result = true;
         } catch (error) {
           res.error = error.toString();
