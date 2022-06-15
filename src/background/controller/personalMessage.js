@@ -161,17 +161,11 @@ export default class PersonalMessageController extends EventEmitter {
     };
     await this.addMsg(msgData);
 
-    // this.emit("update");
-    // triggerUi(`notification.html?id=${msgId}`);
-
     this.signPersonalMessage(msgId);
     return msgId;
-
-    // return msgId;
   }
 
   getMsgParams(req) {
-    // const address = await validateAndNormalizeKeyholder(req.params[0], req);
     if (req.method === "personal_sign" || req.method === "klay_sign") {
       const firstParam = req.params[0];
       const secondParam = req.params[1];
@@ -223,7 +217,6 @@ export default class PersonalMessageController extends EventEmitter {
    * @returns {Promise<Object>} A full state update.
    */
   signPersonalMessage(msgId) {
-    // const msgId = msgParams.id;
     const { unapprovedPersonalMsgs } = this.dekeyStore.getState();
     const msgParams = unapprovedPersonalMsgs[msgId];
     if (!msgParams) {
@@ -256,9 +249,7 @@ export default class PersonalMessageController extends EventEmitter {
           const cResult = this.transactionService.concatSig(vsource, r, s);
           const serialized = ethUtil.bufferToHex(cResult);
           return serialized;
-        } catch (error) {
-          console.error(error);
-        }
+        } catch (error) {}
       })
       .then((rawSig) => {
         // tells the listener that the message has been signed

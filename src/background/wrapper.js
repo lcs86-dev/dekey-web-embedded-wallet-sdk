@@ -10,8 +10,6 @@ import { AccountController } from "./controller/account";
 import PersonalMessageController from "./controller/personalMessage";
 import NetworkUtil from "../util/network";
 
-// console.log("start background wrapper");
-
 (async () => {
   const dekeyStore = new DekeyStore();
   const accountRestApi = new AccountRestApi();
@@ -28,17 +26,6 @@ import NetworkUtil from "../util/network";
   });
 
   mpcService.on("wasm:loaded", async () => {
-    // const existingState = dekeyStore.getState();
-    // let { user } = existingState;
-    // const hasKeyShare = user && user.EncPV;
-    // if (
-    //   !existingState.currentNetwork ||
-    //   !existingState.assets ||
-    //   !existingState.networks
-    // ) {
-    //   await accountService.initializeWallet();
-    // }
-
     await accountService.initializeWallet();
 
     const currentNetwork = NetworkUtil.getCurrentNetwork();
@@ -74,9 +61,4 @@ import NetworkUtil from "../util/network";
       dekeyStore,
     });
   });
-
-  // const providerConnectionManager = new ProviderConnectionManager();
-  // try {
-  //   await providerConnectionManager.connect(currentNetwork);
-  // } catch (error) {}
 })();

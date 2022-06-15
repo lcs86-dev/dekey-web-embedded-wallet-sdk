@@ -5,20 +5,14 @@ import AccountUtil from "../util/account";
  * Handle RPC methods called by dapps
  */
 export default function getRpcMethodMiddleware({
-  hostname,
-  getProviderState,
   ethSendTransaction,
-  resetStore,
   getStoreState,
   updateStore,
   dekeyGenerateKey,
   dekeyRecoverShare,
-  retrieveKeyShare,
   lock,
   unlock,
   addUnapprovedMessageAsync,
-  dekeyHandleSavingRecoverInfoFailure,
-  signPersonalMessage,
   getUser,
   changePassword,
 }) {
@@ -28,7 +22,6 @@ export default function getRpcMethodMiddleware({
       personal_sign: async () => {
         try {
           const rawSig = await addUnapprovedMessageAsync(req);
-          // const result = await signPersonalMessage(msgId);
           res.result = rawSig;
         } catch (error) {
           res.error = error.toString();
@@ -58,7 +51,6 @@ export default function getRpcMethodMiddleware({
       eth_sendTransaction: async () => {
         try {
           const txHash = await ethSendTransaction(req.params[0]);
-          console.log("ethSendTransaction txHash", txHash);
           res.result = txHash;
         } catch (error) {
           res.error = error.toString();
@@ -150,10 +142,6 @@ export default function getRpcMethodMiddleware({
           networkVersion: "1",
           chainId: "0x1",
           accounts: [],
-          // ...getProviderState(),
-          // ...this.getProviderNetworkState(memState),
-          // accounts: await getAccounts(),
-          // accounts: ["0xc2420a498492590a298b894346408ce880d00fe7"],
         };
       },
 

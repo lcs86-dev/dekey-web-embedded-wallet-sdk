@@ -1,8 +1,5 @@
-// import _ from "lodash";
-
 export class DekeyStore {
   reset() {
-    // this.store = new ComposableObservableStore(initState);
     localStorage.removeItem("dekey");
   }
 
@@ -27,13 +24,3 @@ export class DekeyStore {
     localStorage.setItem("dekey", JSON.stringify(newState));
   }
 }
-
-// networks: [...networks],
-// currentNetwork: { ...networks[0] },
-// unapprovedPersonalMsgs: {},
-// user,
-// activeAccount,
-// wallets,
-// accessToken,
-// expirationTime,
-// locked

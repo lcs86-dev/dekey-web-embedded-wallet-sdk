@@ -11,15 +11,7 @@ export class TransactionService extends EventEmitter {
     this.accountRestApi = accountRestApi;
   }
 
-  async signTx({
-    txParams,
-    network,
-    nonce,
-    account,
-    // autoconfirm,
-    // dappInfo,
-    // ledgerService,
-  }) {
+  async signTx({ txParams, network, nonce, account }) {
     try {
       const { chainId } = network;
 
@@ -35,13 +27,6 @@ export class TransactionService extends EventEmitter {
         nonce,
       });
 
-      console.log("unsignedTx", unsignedTx);
-
-      if (txParams.contractAddress) {
-        delete unsignedTx.value;
-      }
-
-      const { gasPrice, to } = txParams;
       const { accessToken } = this.dekeyStore.getState();
 
       const serializedTx = this.serializeEthTx(unsignedTx);
@@ -49,20 +34,11 @@ export class TransactionService extends EventEmitter {
 
       const mpcToken = await this.accountRestApi.getMpcJwt(accessToken);
 
-      // const requestApprovalInput: RequestTxApprovalInput = {
-      //   hash: messageHash,
-      //   unsignedTx,
-      //   userId: user.uid,
-      //   walletId: 1,
-      // };
-      // await TxInfra.validateHash(requestApprovalInput, accessToken);
-
       const sResult = await this.mpcService.sign({
         txHash: messageHash.slice(2),
         mpcToken,
         accountId: account.id,
       });
-      console.log("sResult", sResult);
       const { r, s, vsource } = sResult;
       const v = this.calculateV({
         r,
@@ -150,7 +126,6 @@ export class TransactionService extends EventEmitter {
     const sBuffer = Buffer.from(stripHexPrefix(s), "hex");
     const rSig = ethUtil.fromSigned(rBuffer);
     const sSig = ethUtil.fromSigned(sBuffer);
-    // const vSig = ethUtil.bufferToInt(v);
     const rStr = this._padWithZeroes(
       ethUtil.toUnsigned(rSig).toString("hex"),
       64

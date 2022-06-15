@@ -49,9 +49,6 @@ export class AccountController {
   async recoverShare(dto) {
     const { password, user, wallets } = dto;
 
-    // const existingUser = JSON.parse(dto.backupInfo.user);
-    // const existingWallets = JSON.parse(dto.backupInfo.wallets);
-
     const mpcToken = "DUMMY_TOKEN";
 
     const nextWid = WalletUtil.getNextWidForRecover(wallets);

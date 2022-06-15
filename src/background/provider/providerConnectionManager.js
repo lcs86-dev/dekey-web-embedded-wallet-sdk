@@ -32,7 +32,7 @@ export class ProviderConnectionManager extends EventEmitter {
     return { provider, blockTracker };
   }
 
-  async connect(network, accToken) {
+  async connect(network) {
     try {
       const { chainId, rpcUrl, target, isCustom } = network;
       const rpcUrlWithNoTrailingSlash = rpcUrl.replace(/\/$/, "");
@@ -100,12 +100,6 @@ export class ProviderConnectionManager extends EventEmitter {
   }
 
   async getTransactionCount(address) {
-    // const txCount = await this.ethersProvider.getTransactionCount(
-    //   address,
-    //   'pending'
-    // );
-    // const txCount = await this.web3.eth.getTransactionCount(address, 'pending');
-
     const txCount = await this.query.getTransactionCount(address, "pending");
 
     return BigNumber.from(txCount.toString(10)).toHexString();

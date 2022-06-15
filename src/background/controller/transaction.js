@@ -2,23 +2,14 @@ import AccountUtil from "../../util/account";
 import NetworkUtil from "../../util/network";
 
 export class TransactionController {
-  constructor({
-    // nonceTracker,
-    transactionService,
-    providerConnectionManager,
-    dekeyStore,
-  }) {
-    // this.nonceTracker = nonceTracker;
+  constructor({ transactionService, providerConnectionManager, dekeyStore }) {
     this.transactionService = transactionService;
     this.providerConnectionManager = providerConnectionManager;
     this.dekeyStore = dekeyStore;
   }
 
   async ethSendTransaction(newTxParams) {
-    console.log("ethSendTransaction newTxParams", newTxParams);
     const { user } = this.dekeyStore.getState();
-
-    console.log("ethSendTransaction user", user);
 
     const activeAccount = AccountUtil.getActiveAccount(user.accounts);
     const currentNetwork = NetworkUtil.getCurrentNetwork();
@@ -38,16 +29,12 @@ export class TransactionController {
         activeAccount.ethAddress
       );
 
-    console.log("networkNonceNext", networkNonceNext);
-
-    let gas = await this.providerConnectionManager.estimateGas({
+    const gas = await this.providerConnectionManager.estimateGas({
       from: activeAccount.ethAddress,
       to: newTxParams.to,
       data: newTxParams.data,
       value: newTxParams.value ?? "0x0",
     });
-
-    console.log("gas", gas);
 
     const rawTx = await this.transactionService.signTx({
       txParams: {

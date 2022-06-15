@@ -8,11 +8,6 @@ import {
 } from "../util/browserScripts";
 import MobilePortStream from "./MobilePortStream";
 import { setupMultiplex } from "../util/streams";
-// import { createOriginMiddleware, createLoggerMiddleware } from '../util/middlewares';
-// import Engine from './Engine';
-// import { getAllNetworks } from '../util/networks';
-// import Logger from '../util/Logger';
-// import AppConstants from './AppConstants';
 import { createEngineStream } from "json-rpc-middleware-stream";
 import createMethodMiddleware from "./methodMiddleware";
 
@@ -22,7 +17,6 @@ const createSubscriptionManager = require("eth-json-rpc-filters/subscriptionMana
 const pump = require("pump");
 // eslint-disable-next-line import/no-nodejs-modules
 const EventEmitter = require("events").EventEmitter;
-// const { NOTIFICATION_NAMES } = AppConstants;
 
 /**
  * Module that listens for and responds to messages from an InpageBridge using postMessage
@@ -36,8 +30,6 @@ class Port extends EventEmitter {
   }
 
   postMessage = (msg, origin = "*") => {
-    // console.log("POrt postMessage");
-    // console.log(msg);
     // const js = this._isMainFrame
     //   ? JS_POST_MESSAGE_TO_PROVIDER(msg, origin)
     //   : JS_IFRAME_POST_MESSAGE_TO_PROVIDER(msg, origin);
@@ -49,12 +41,9 @@ class Port extends EventEmitter {
 }
 
 export class BackgroundBridge extends EventEmitter {
-  // UCWasm;
-
   constructor({
     webview,
     url,
-    // getRpcMethodMiddleware,
     isMainFrame,
     transactionController,
     personalMessageController,
@@ -63,22 +52,17 @@ export class BackgroundBridge extends EventEmitter {
     dekeyStore,
   }) {
     super();
-    // this.UCWasm = new UCWasm();
     this.url = url;
     this.hostname = new URL(url).hostname;
     this.isMainFrame = isMainFrame;
-    // this._webviewRef = webview && webview.current;
     this._webviewRef = webview;
 
-    // this.createMiddleware = getRpcMethodMiddleware;
     this.transactionController = transactionController;
     this.personalMessageController = personalMessageController;
     this.accountController = accountController;
     this.providerConnectionManager = providerConnectionManager;
     this.dekeyStore = dekeyStore;
 
-    // this.provider = Engine.context.NetworkController.provider;
-    // this.blockTracker = this.provider._blockTracker;
     this.port = new Port(this._webviewRef, isMainFrame);
 
     this.engine = null;
@@ -91,20 +75,10 @@ export class BackgroundBridge extends EventEmitter {
     // connect features
     this.setupProviderConnection(mux.createStream("dekey-mobile-provider"));
 
-    //     const INPAGE = "dekey-inpage";
-    // const CONTENT_SCRIPT = "dekey-contentscript";
-    // const PROVIDER = "dekey-provider";
-
     // Engine.context.NetworkController.subscribe(this.sendStateUpdate);
     // Engine.context.PreferencesController.subscribe(this.sendStateUpdate);
-
     // Engine.context.KeyringController.onLock(this.onLock.bind(this));
     // Engine.context.KeyringController.onUnlock(this.onUnlock.bind(this));
-
-    this.on("update", this.onStateUpdate);
-
-    // import '@metamask/mobile-provider/dist/index';
-    // require('dekey-mobile-provider/dist/index')
 
     window.addEventListener("message", (event) => {
       // console.log(event);
@@ -123,87 +97,6 @@ export class BackgroundBridge extends EventEmitter {
       "*"
     );
   }
-
-  // generateMpcKeyshare(dto) {
-  //   console.log("generateMpcKeyshare");
-  //   try {
-  //     const eventEmitter = new EventEmitter();
-  //     // eventEmitter.once('ddd')
-  //     this.UCWasm.generateKeyShare(dto, eventEmitter);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
-
-  // onUnlock() {
-  // 	this.sendNotification({
-  // 		method: NOTIFICATION_NAMES.unlockStateChanged,
-  // 		params: true,
-  // 	});
-  // }
-
-  // onLock() {
-  // 	this.sendNotification({
-  // 		method: NOTIFICATION_NAMES.unlockStateChanged,
-  // 		params: false,
-  // 	});
-  // }
-
-  // getProviderNetworkState({ network }) {
-  // 	const networkType = Engine.context.NetworkController.state.provider.type;
-  // 	const networkProvider = Engine.context.NetworkController.state.provider;
-
-  // 	const isInitialNetwork = networkType && getAllNetworks().includes(networkType);
-  // 	let chainId;
-
-  // 	if (isInitialNetwork) {
-  // 		chainId = NetworksChainId[networkType];
-  // 	} else if (networkType === 'rpc') {
-  // 		chainId = networkProvider.chainId;
-  // 	}
-  // 	if (chainId && !chainId.startsWith('0x')) {
-  // 		// Convert to hex
-  // 		chainId = `0x${parseInt(chainId, 10).toString(16)}`;
-  // 	}
-
-  // 	const result = {
-  // 		networkVersion: network,
-  // 		chainId,
-  // 	};
-  // 	return result;
-  // }
-
-  onStateUpdate(memState) {
-    if (!memState) {
-      memState = this.getState();
-    }
-    const publicState = this.getProviderNetworkState(memState);
-
-    // Check if update already sent
-    if (this.chainIdSent === publicState.chainId) return;
-    this.chainIdSent = publicState.chainId;
-
-    // this.sendNotification({
-    // 	method: NOTIFICATION_NAMES.chainChanged,
-    // 	params: publicState,
-    // });
-  }
-
-  // isUnlocked() {
-  // 	return Engine.context.KeyringController.isUnlocked();
-  // }
-
-  getProviderState() {
-    const memState = this.getState();
-    return {
-      isUnlocked: this.isUnlocked(),
-      ...this.getProviderNetworkState(memState),
-    };
-  }
-
-  sendStateUpdate = () => {
-    this.emit("update");
-  };
 
   onMessage = (msg) => {
     this.port.emit("message", { name: msg.name, data: msg.data });
@@ -231,7 +124,6 @@ export class BackgroundBridge extends EventEmitter {
             mid.destroy();
           }
         });
-        // if (err) Logger.log('Error with provider stream conn', err);
       });
     } catch (error) {
       console.error(error);
@@ -246,12 +138,12 @@ export class BackgroundBridge extends EventEmitter {
     // setup json rpc engine stack
     const engine = new JsonRpcEngine();
 
-    // // create filter polyfill middleware
+    // create filter polyfill middleware
     const { provider, blockTracker } =
       this.providerConnectionManager.getProviderAndBlockTracker();
     const filterMiddleware = createFilterMiddleware({ provider, blockTracker });
 
-    // // // create subscription polyfill middleware
+    // create subscription polyfill middleware
     const subscriptionManager = createSubscriptionManager({
       provider,
       blockTracker,
@@ -260,19 +152,16 @@ export class BackgroundBridge extends EventEmitter {
       engine.emit("notification", message)
     );
 
-    // // metadata
+    // metadata
     // engine.push(createOriginMiddleware({ origin }));
     engine.push(createLoggerMiddleware({ origin }));
-    // // filter and subscription polyfills
+    // filter and subscription polyfills
     engine.push(filterMiddleware);
     engine.push(subscriptionManager.middleware);
-    // // watch asset
 
-    // // user-facing RPC methods
+    // user-facing RPC methods
     engine.push(
       createMethodMiddleware({
-        hostname: this.hostname,
-        getProviderState: () => {},
         ethSendTransaction: this.transactionController.ethSendTransaction.bind(
           this.transactionController
         ),
@@ -280,11 +169,6 @@ export class BackgroundBridge extends EventEmitter {
           this.personalMessageController.addUnapprovedMessageAsync.bind(
             this.personalMessageController
           ),
-        signPersonalMessage:
-          this.personalMessageController.signPersonalMessage.bind(
-            this.personalMessageController
-          ),
-        resetStore: this.dekeyStore.reset.bind(this.dekeyStore),
         getStoreState: this.dekeyStore.getState.bind(this.dekeyStore),
         updateStore: this.dekeyStore.updateStore.bind(this.dekeyStore),
         dekeyGenerateKey: this.accountController.generateKey.bind(
@@ -299,7 +183,6 @@ export class BackgroundBridge extends EventEmitter {
         changePassword: this.accountController.changePassword.bind(
           this.accountController
         ),
-        // getProviderState: this.getProviderState.bind(this),
       })
     );
 
@@ -321,7 +204,7 @@ export function createOriginMiddleware(opts) {
     req.origin = opts.origin;
 
     // web3-provider-engine compatibility
-    // TODO:provider delete this after web3-provider-engine deprecation
+    // TODO: provider delete this after web3-provider-engine deprecation
     if (!req.params) {
       req.params = [];
     }

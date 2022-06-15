@@ -45,13 +45,6 @@ export class MpcService extends EventEmitter {
         } else {
           reject(result.message);
         }
-        // event.source.postMessage(
-        //   {
-        //     result: result,
-        //     command,
-        //   },
-        //   event.origin
-        // );
       });
 
       this.uCWasm.generateKeyShare(data, eventObj);

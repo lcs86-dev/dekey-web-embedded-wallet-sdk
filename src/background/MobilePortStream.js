@@ -14,10 +14,6 @@ export default class PortDuplexStream extends Duplex {
     this._url = url;
     this._port.addListener("message", this._onMessage.bind(this));
     this._port.addListener("disconnect", this._onDisconnect.bind(this));
-
-    // setInterval(() => {
-    //   this._port.postMessage({ abc: "dddd" }, this._url);
-    // }, 3000);
   }
 
   /**
@@ -28,10 +24,6 @@ export default class PortDuplexStream extends Duplex {
    * @param {Object} msg - Payload from the onMessage listener of Port
    */
   _onMessage = function (msg) {
-    // console.log("PortDuplexStream _onMessage", msg);
-    // if (!msg.name) {
-    //   return;
-    // }
     if (Buffer.isBuffer(msg)) {
       delete msg._isBuffer;
       const data = new Buffer(msg);
@@ -66,8 +58,6 @@ export default class PortDuplexStream extends Duplex {
    * @param {Function} cb Called when writing is complete or an error occurs
    */
   _write = function (msg, encoding, cb) {
-    // alert(msg);
-    // console.log("MobilePortStream _write", msg);
     try {
       if (Buffer.isBuffer(msg)) {
         const data = msg.toJSON();
@@ -77,7 +67,6 @@ export default class PortDuplexStream extends Duplex {
         this._port.postMessage(msg, this._url);
       }
     } catch (err) {
-      // console.error(err);
       return cb(new Error("PortDuplexStream - disconnected"));
     }
     cb();

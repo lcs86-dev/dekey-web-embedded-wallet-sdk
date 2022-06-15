@@ -25,7 +25,6 @@ import { client } from "../../../util/apiClient";
 
 export class AccountRestApi {
   registerUser = async (dto) => {
-    console.log("registerUser rest api", dto);
     try {
       const result = await client("v1/user/register", {
         data: dto,
@@ -88,36 +87,6 @@ export class AccountRestApi {
       throw error;
     }
   };
-
-  // saveKeyGenResult = async (dto) => {
-  //   try {
-  //     const {
-  //       accessToken,
-  //       address,
-  //       pubKey,
-  //       uCPubKey,
-  //       sid,
-  //       accountId,
-  //       accountName,
-  //     } = dto;
-
-  //     const res = await client("v1/address/add", {
-  //       data: {
-  //         uCPubKey,
-  //         pubkey: pubKey,
-  //         address,
-  //         sid,
-  //         accountId,
-  //         accountName,
-  //       },
-  //       token: accessToken,
-  //     });
-
-  //     return res.user;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // };
 
   unlock = async (dto, accessToken) => {
     try {
