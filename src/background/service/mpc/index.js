@@ -122,7 +122,7 @@ export class MpcService extends EventEmitter {
   //   });
   // }
 
-  changePassword(data) {
+  changePassword(dto) {
     return new Promise((resolve, reject) => {
       const eventObj = new EventEmitter();
 
@@ -134,7 +134,7 @@ export class MpcService extends EventEmitter {
         }
       });
 
-      this.uCWasm.changePassword(data, eventObj);
+      this.uCWasm.changePassword(dto, eventObj);
     });
   }
 }

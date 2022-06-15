@@ -100,6 +100,9 @@ export class AccountController {
   }
 
   async changePassword(dto) {
-    return this.mpcService.changePassword(dto);
+    const { oldPassword, newPassword, encpv } = dto;
+    const newEncpv = await this.mpcService.changePassword(dto);
+    await this.accountService.unlock(newPassword, this.mpcService);
+    return newEncpv;
   }
 }

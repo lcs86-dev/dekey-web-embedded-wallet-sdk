@@ -23,9 +23,6 @@ export default function getRpcMethodMiddleware({
 }) {
   // all user facing RPC calls not implemented by the provider
   return createAsyncMiddleware(async (req, res, next) => {
-    // console.log("createAsyncMiddleware");
-    // console.log(req);
-
     const rpcMethods = {
       personal_sign: async () => {
         try {
@@ -124,9 +121,9 @@ export default function getRpcMethodMiddleware({
       dekey_change_password: async () => {
         try {
           res.result = await changePassword({
-            oldAessource: req.params[0],
-            newAessource: req.params[1],
-            EncPV: req.params[2],
+            oldPassword: req.params[0],
+            newPassword: req.params[1],
+            encpv: req.params[2],
           });
         } catch (error) {
           res.error = error.toString();

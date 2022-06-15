@@ -1134,8 +1134,8 @@ function CheckPassword(dto, eventType) {
   }
 }
 
-function ChangePassword({ oldAessource, newAessource, EncPV }, eventType) {
-  const res = WASMPasswordChange(oldAessource, newAessource, EncPV);
+function ChangePassword({ oldPassword, newPassword, encpv }, eventType) {
+  const res = WASMPasswordChange(oldPassword, newPassword, encpv);
 
   if (res.indexOf(ErrStr) != -1) {
     self.postMessage({
