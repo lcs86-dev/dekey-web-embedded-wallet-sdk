@@ -88,7 +88,7 @@ export class AccountRestApi {
     }
   };
 
-  unlock = async (dto, accessToken) => {
+  unlock = async (dto) => {
     try {
       const result = await client("v1/user/unlock", {
         data: dto,
@@ -107,7 +107,27 @@ export class AccountRestApi {
         token,
       });
 
+      if (!res?.mpcJwt) {
+        throw new Error("No mpcJwt");
+      }
+
       return res.mpcJwt;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getWallets = async (uid) => {
+    try {
+      const res = await client("v1/user/wallets", {
+        data: { uid },
+      });
+
+      if (!res?.wallets) {
+        throw new Error("No wallets");
+      }
+
+      return res.wallets;
     } catch (error) {
       throw error;
     }

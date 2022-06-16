@@ -10,19 +10,22 @@ export class AccountController {
     this.accountRestApi = accountRestApi;
   }
 
-  async generateKey({ password }) {
+  async generateKey({ password, accessToken }) {
+    console.log("generateKey", accessToken);
     const uid = uuidv4();
     const wid = 1;
 
     // TODO: replace to the token issued by skt
-    const mpcToken = "DUMMY_TOKEN";
+    // const mpcToken = "DUMMY_TOKEN";
 
     const keyGenResult = await this.mpcService.generateKeyShare({
       uid,
       wid,
       password,
-      mpcToken,
+      mpcToken: accessToken,
     });
+
+    console.log("keyGenResult", keyGenResult);
 
     const { UCPubKey, OurPubKey, Sid, PVEncStr } = keyGenResult;
 
@@ -43,14 +46,13 @@ export class AccountController {
 
     await this.unlock({ password });
 
-    return { user, wallets, encpv: PVEncStr };
+    return { user: user, address: Sid };
   }
 
   async recoverShare(dto) {
-    const { password, user, wallets } = dto;
+    const { password, user, accessToken } = dto;
 
-    const mpcToken = "DUMMY_TOKEN";
-
+    const wallets = await this.accountRestApi.getWallets(user.uid);
     const nextWid = WalletUtil.getNextWidForRecover(wallets);
 
     const { UCPubKey, OurPubKey, Sid, PVEncStr } =
@@ -59,7 +61,7 @@ export class AccountController {
         wid: nextWid,
         password,
         sid: user.accounts[0].sid,
-        mpcToken,
+        mpcToken: accessToken,
       });
 
     //  save recover result to app server including wallet (wid, uid, ucpubkey)
@@ -78,9 +80,10 @@ export class AccountController {
     await this.unlock({ password });
 
     return {
-      user,
-      wallets: recoverWalletResult.wallets,
-      encpv: PVEncStr,
+      address: Sid,
+      // user,
+      // wallets: recoverWalletResult.wallets,
+      // encpv: PVEncStr,
     };
   }
 
